@@ -53,16 +53,20 @@ Game.Level1.prototype = {
             jumpTimer = this.time.now + 750;
         }
 
-        if(controls.right.isDown) {
+        if(controls.left.isDown) {
             player.animations.play('run');
-            player.scale.setTo(1, 1);
+            player.scale.setTo(-1, 1);
             player.body.velocity.x -= playerSpeed;
         }
 
-        if(controls.left.isDown) {
+        if(controls.right.isDown) {
             player.animations.play('run');
             player.scale.setTo(1, 1);
             player.body.velocity.x += playerSpeed;
+        }
+
+        if(player.body.velocity.x === 0 && player.body.velocity.y === 0){
+            player.animations.play('idle');
         }
     }
 };
