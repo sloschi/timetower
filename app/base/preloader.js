@@ -12,6 +12,11 @@ Game.Preloader.prototype = {
         this.load.setPreloadSprite(this.preloadscreen);
 
         //load assets etc
+        this.load.tilemap('map', './assets/level1.csv');
+
+        this.load.image('maptileset', './assets/maptileset.png');
+
+        this.load.spritesheet('player', './assets/player.png', 24,26);
     },
 
     create: function () {
