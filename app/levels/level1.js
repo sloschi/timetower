@@ -5,8 +5,10 @@ var layer;
 
 var player;
 var controls = {};
-var playerSpeed = 150;
+var playerSpeed = 180;
 var jumpTimer = 0;
+
+var pad1;
 
 Game.Level1.prototype = {
     create: function () {
@@ -34,6 +36,10 @@ Game.Level1.prototype = {
         this.camera.follow(player);
         player.body.collideWorldBounds = true;
 
+        this.input.gamepad.start();
+        pad1 = this.input.gamepad.pad1;
+
+
         controls = {
             right: this.input.keyboard.addKey(Phaser.Keyboard.D),
             left: this.input.keyboard.addKey(Phaser.Keyboard.A),
@@ -46,25 +52,29 @@ Game.Level1.prototype = {
 
         player.body.velocity.x = 0;
 
-        if(controls.up.isDown && (player.body.onFloor() || player.body.touching.down) && this.time.now > jumpTimer) {
+        //move left
+        if(pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
+            player.animations.play('run');
+            player.scale.setTo(-1, 1);
+            player.body.velocity.x += pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) * playerSpeed;
+        }
+
+        //move right
+        if (pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || (pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1)) {
+            player.animations.play('run');
+            player.scale.setTo(1, 1);
+            player.body.velocity.x += pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) * playerSpeed;
+        }
+
+        //jump
+        if(pad1.justPressed(Phaser.Gamepad.XBOX360_A) && (player.body.onFloor() || player.body.touching.down) && this.time.now > jumpTimer) {
             player.animations.play('jump');
 
             player.body.velocity.y = -600;
             jumpTimer = this.time.now + 750;
         }
 
-        if(controls.left.isDown) {
-            player.animations.play('run');
-            player.scale.setTo(-1, 1);
-            player.body.velocity.x -= playerSpeed;
-        }
-
-        if(controls.right.isDown) {
-            player.animations.play('run');
-            player.scale.setTo(1, 1);
-            player.body.velocity.x += playerSpeed;
-        }
-
+        //idle
         if(player.body.velocity.x === 0 && player.body.velocity.y === 0){
             player.animations.play('idle');
         }
